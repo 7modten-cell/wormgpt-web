@@ -64,8 +64,8 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                // نستخدم المسار النسبي لأن الواجهة والخادم في نفس المكان
-                const response = await fetch('/chat', {
+                // تم وضع الرابط الكامل هنا
+                const response = await fetch('https://wormgpt-web-b57w.vercel.app/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text: text })
@@ -76,7 +76,7 @@
                 addMessage(data.reply, false);
             } catch (error) {
                 document.getElementById(loadingId).remove();
-                addMessage("حدث خطأ في الاتصال.", false);
+                addMessage("حدث خطأ في الاتصال. تأكد من اتصالك بالإنترنت.", false);
             }
         }
     </script>
