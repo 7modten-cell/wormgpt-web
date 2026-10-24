@@ -1,32 +1,62 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WormGPT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WormGPT Chat</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; }
+        .msg-user { background-color: #dcf8c6; border-radius: 12px 0 12px 12px; }
+        .msg-bot { background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 0 12px 12px 12px; border: 1px solid #f2f2f2; }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+    </style>
 </head>
-<body class="bg-gray-900 text-white h-screen flex flex-col items-center justify-center p-4 font-sans">
+<body class="flex flex-col h-screen overflow-hidden">
 
-    <div class="w-full max-w-xl flex justify-between items-center mb-2">
-        <h1 class="text-lg font-bold">WormGPT</h1>
-        <button onclick="newChat()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-1 rounded text-sm transition">
-            محادثة جديدة
-        </button>
-    </div>
+    <!-- Header -->
+    <header class="bg-[#075e54] text-white py-2 px-3 flex items-center gap-3 shadow-md z-10">
+        <i class="fas fa-arrow-left text-lg cursor-pointer"></i>
+        <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+            <i class="fas fa-robot text-gray-500 text-xl"></i>
+        </div>
+        <div class="flex flex-col flex-1">
+            <span class="font-bold text-[17px] leading-tight">WormGPT</span>
+            <span class="text-[13px] text-green-100">online</span>
+        </div>
+        <div class="flex gap-5 text-xl mr-2">
+            <i class="fas fa-video cursor-pointer"></i>
+            <i class="fas fa-phone cursor-pointer"></i>
+            <i class="fas fa-ellipsis-v cursor-pointer"></i>
+        </div>
+    </header>
 
-    <div id="chat-box" class="w-full max-w-xl flex-1 bg-gray-800 rounded-lg p-4 overflow-y-auto mb-4 flex flex-col gap-3 border border-gray-700">
-    </div>
+    <!-- Chat Area -->
+    <main id="chat-box" class="flex-1 overflow-y-auto p-3 flex flex-col gap-2 bg-[#ece5dd] bg-opacity-30 pb-4">
+        <!-- Initial Message -->
+        <div class="flex w-full justify-start">
+            <div class="max-w-[80%] px-3 py-2 text-[15px] leading-relaxed relative msg-bot">
+                <div class="text-gray-900 pb-3">مرحباً بك! أنا WormGPT، كيف يمكنني مساعدتك اليوم؟</div>
+                <div class="text-[11px] text-gray-400 absolute bottom-1 right-2 flex items-center gap-1">
+                    now
+                </div>
+            </div>
+        </div>
+    </main>
 
-    <div class="w-full max-w-xl flex gap-2">
-        <input type="text" id="user-input" 
-            class="flex-1 bg-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 border border-gray-600"
-            placeholder="اكتب رسالتك..."
-            onkeypress="if(event.key === 'Enter') sendMessage()">
-        
-        <button onclick="sendMessage()" 
-            class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-bold transition">
-            إرسال
+    <!-- Input Area -->
+    <div class="bg-transparent p-2 flex items-end gap-2 pb-3 w-full max-w-3xl mx-auto">
+        <div class="flex-1 bg-[#f0f0f0] rounded-3xl flex items-center px-4 py-2 min-h-[48px]">
+            <i class="far fa-smile text-gray-500 mr-3 text-[22px] cursor-pointer"></i>
+            <input type="text" id="user-input" 
+                class="flex-1 outline-none bg-transparent text-gray-800 text-[16px] w-full" 
+                placeholder="Message..." 
+                autocomplete="off"
+                onkeypress="if(event.key === 'Enter') sendMessage()">
+        </div>
+        <button onclick="sendMessage()" class="bg-[#79a270] text-white w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center shadow-md transform hover:scale-105 transition">
+            <i class="fas fa-paper-plane text-xl pr-1"></i>
         </button>
     </div>
 
@@ -34,18 +64,37 @@
         const chatBox = document.getElementById('chat-box');
         const userInput = document.getElementById('user-input');
 
-        function newChat() {
-            chatBox.innerHTML = '';
+        function getCurrentTime() {
+            const now = new Date();
+            return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
         }
 
         function addMessage(text, isUser = false) {
-            const div = document.createElement('div');
-            div.className = `p-3 rounded-lg max-w-[85%] text-sm whitespace-pre-wrap ${
-                isUser ? 'bg-blue-600 self-end rounded-tr-none' : 'bg-gray-700 self-start rounded-tl-none'
-            }`;
-            div.textContent = text;
-            chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex w-full ${isUser ? 'justify-end' : 'justify-start'}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = `max-w-[80%] px-3 py-2 text-[15px] leading-relaxed relative ${isUser ? 'msg-user' : 'msg-bot'}`;
+            
+            // Format newlines
+            let formattedText = text.replace(/\n/g, '<br>');
+            
+            const timeStr = getCurrentTime();
+            const statusIcon = isUser ? '<i class="fas fa-check-double text-[#53bdeb] ml-1"></i>' : '';
+            
+            bubble.innerHTML = `
+                <div class="text-gray-900 pb-3 text-left" dir="auto">${formattedText}</div>
+                <div class="text-[11px] text-gray-500 absolute bottom-1 right-2 flex items-center gap-1">
+                    ${timeStr} ${statusIcon}
+                </div>
+            `;
+            
+            wrapper.appendChild(bubble);
+            chatBox.appendChild(wrapper);
+            
+            setTimeout(() => {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 50);
         }
 
         async function sendMessage() {
@@ -56,15 +105,15 @@
             userInput.value = '';
 
             const loadingId = 'loading-' + Date.now();
-            const loadingDiv = document.createElement('div');
-            loadingDiv.id = loadingId;
-            loadingDiv.className = 'text-gray-400 text-xs self-start';
-            loadingDiv.textContent = 'جاري الرد...';
-            chatBox.appendChild(loadingDiv);
+            const wrapper = document.createElement('div');
+            wrapper.id = loadingId;
+            wrapper.className = 'flex w-full justify-start';
+            wrapper.innerHTML = `<div class="msg-bot max-w-[80%] px-3 py-2 text-gray-400 text-sm italic">typing...</div>`;
+            chatBox.appendChild(wrapper);
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                // تم وضع الرابط الكامل هنا
+                // استخدام رابط Vercel الخاص بك لضمان الاتصال المستقر
                 const response = await fetch('https://wormgpt-web-b57w.vercel.app/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -76,7 +125,7 @@
                 addMessage(data.reply, false);
             } catch (error) {
                 document.getElementById(loadingId).remove();
-                addMessage("حدث خطأ في الاتصال. تأكد من اتصالك بالإنترنت.", false);
+                addMessage("⚠️ خطأ في الاتصال بالسيرفر.", false);
             }
         }
     </script>
