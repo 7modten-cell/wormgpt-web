@@ -2,18 +2,19 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>WormGPT Chat</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; }
-        .msg-user { background-color: #dcf8c6; border-radius: 12px 0 12px 12px; }
-        .msg-bot { background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 0 12px 12px 12px; border: 1px solid #f2f2f2; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #ece5dd; }
+        .msg-user { background-color: #dcf8c6; border-radius: 12px 0 12px 12px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+        .msg-bot { background-color: #ffffff; border-radius: 0 12px 12px 12px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
         ::-webkit-scrollbar { width: 0px; background: transparent; }
+        .bg-chat { background-color: #ece5dd; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; opacity: 0.9; }
     </style>
 </head>
-<body class="flex flex-col h-screen overflow-hidden">
+<body class="flex flex-col h-screen overflow-hidden bg-chat">
 
     <!-- Header -->
     <header class="bg-[#075e54] text-white py-2 px-3 flex items-center gap-3 shadow-md z-10">
@@ -33,10 +34,10 @@
     </header>
 
     <!-- Chat Area -->
-    <main id="chat-box" class="flex-1 overflow-y-auto p-3 flex flex-col gap-2 bg-[#ece5dd] bg-opacity-30 pb-12">
+    <main id="chat-box" class="flex-1 overflow-y-auto p-3 flex flex-col gap-3 pb-8">
         <!-- Initial Message -->
         <div class="flex w-full justify-start">
-            <div class="max-w-[80%] px-3 py-2 text-[15px] leading-relaxed relative msg-bot">
+            <div class="max-w-[85%] px-3 py-2 text-[15px] leading-relaxed relative msg-bot">
                 <div class="text-gray-900 pb-3">مرحباً بك! أنا WormGPT، كيف يمكنني مساعدتك اليوم؟</div>
                 <div class="text-[11px] text-gray-400 absolute bottom-1 right-2 flex items-center gap-1">
                     now
@@ -45,17 +46,19 @@
         </div>
     </main>
 
-    <!-- Input Area (تم رفعه للأعلى) -->
-    <div class="bg-transparent p-2 flex items-end gap-2 pb-8 mb-4 w-full max-w-3xl mx-auto">
-        <div class="flex-1 bg-[#f0f0f0] rounded-3xl flex items-center px-4 py-2 min-h-[48px]">
-            <i class="far fa-smile text-gray-500 mr-3 text-[22px] cursor-pointer"></i>
+    <!-- Input Area -->
+    <div class="p-2 flex items-end gap-2 pb-12 w-full max-w-3xl mx-auto bg-transparent">
+        <div class="flex-1 bg-white rounded-3xl flex items-center px-4 py-2 min-h-[48px] shadow-sm">
+            <i class="far fa-smile text-gray-400 mr-3 text-[24px] cursor-pointer"></i>
             <input type="text" id="user-input" 
                 class="flex-1 outline-none bg-transparent text-gray-800 text-[16px] w-full" 
                 placeholder="Message..." 
                 autocomplete="off"
                 onkeypress="if(event.key === 'Enter') sendMessage()">
+            <i class="fas fa-paperclip text-gray-400 ml-3 text-[20px] cursor-pointer"></i>
+            <i class="fas fa-camera text-gray-400 ml-4 text-[20px] cursor-pointer"></i>
         </div>
-        <button onclick="sendMessage()" class="bg-[#79a270] text-white w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center shadow-md transform hover:scale-105 transition">
+        <button onclick="sendMessage()" class="bg-[#00a884] text-white w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center shadow-md transform hover:scale-105 transition">
             <i class="fas fa-paper-plane text-xl pr-1"></i>
         </button>
     </div>
@@ -74,7 +77,7 @@
             wrapper.className = `flex w-full ${isUser ? 'justify-end' : 'justify-start'}`;
             
             const bubble = document.createElement('div');
-            bubble.className = `max-w-[80%] px-3 py-2 text-[15px] leading-relaxed relative ${isUser ? 'msg-user' : 'msg-bot'}`;
+            bubble.className = `max-w-[85%] px-3 py-2 text-[15px] leading-relaxed relative ${isUser ? 'msg-user' : 'msg-bot'}`;
             
             let formattedText = text.replace(/\n/g, '<br>');
             const timeStr = getCurrentTime();
@@ -105,8 +108,8 @@
             const loadingId = 'loading-' + Date.now();
             const wrapper = document.createElement('div');
             wrapper.id = loadingId;
-            wrapper.className = 'flex w-full justify-start';
-            wrapper.innerHTML = `<div class="msg-bot max-w-[80%] px-3 py-2 text-gray-400 text-sm italic">typing...</div>`;
+            wrapper.className = 'flex w-full justify-start mb-2';
+            wrapper.innerHTML = `<div class="msg-bot max-w-[85%] px-3 py-2 text-gray-400 text-sm italic">typing...</div>`;
             chatBox.appendChild(wrapper);
             chatBox.scrollTop = chatBox.scrollHeight;
 
