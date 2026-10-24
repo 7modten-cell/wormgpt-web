@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat</title>
+    <title>WormGPT</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white h-screen flex flex-col items-center justify-center p-4 font-sans">
@@ -15,11 +15,9 @@
         </button>
     </div>
 
-    <!-- منطقة الشات -->
     <div id="chat-box" class="w-full max-w-xl flex-1 bg-gray-800 rounded-lg p-4 overflow-y-auto mb-4 flex flex-col gap-3 border border-gray-700">
     </div>
 
-    <!-- منطقة الإدخال -->
     <div class="w-full max-w-xl flex gap-2">
         <input type="text" id="user-input" 
             class="flex-1 bg-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 border border-gray-600"
@@ -36,7 +34,6 @@
         const chatBox = document.getElementById('chat-box');
         const userInput = document.getElementById('user-input');
 
-        // وظيفة زر محادثة جديدة
         function newChat() {
             chatBox.innerHTML = '';
         }
@@ -67,6 +64,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
+                // نستخدم المسار النسبي لأن الواجهة والخادم في نفس المكان
                 const response = await fetch('/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
